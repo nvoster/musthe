@@ -5,19 +5,41 @@ Music theory implemented in Python. Notes, scales and chords.
 
 It is still in development so feel free to read the code, fork and make pull requests! They are very welcome!
 
+Installation
+============
+
+To install:
+
+    $ pip install musthe
+
+
+Development install
+===================
+
+To install as development:
+
+(Optional) Create a virtualenv:
+
+    $ python -m venv env
+    $ source env/bin/activate
+
+Then install:
+
+    $ pip install -e .
+
 
 How to use
 ==========
 
 It is very simple, everything is coded in a object-oriented style, for example:
 
-    $ python -i musthe.py
+    $ python
+    >>> from musthe import *
     >>> a = Note('A')  #Default A4
     >>> a
     Note("A4")
     >>> str(a)
     'A'
-
 
 
 Suppose you want to create tension, so you want the perfect fifth or the minor seventh of that A, so you do:
@@ -69,7 +91,7 @@ It return a list of Note instances, so if you want a cleaner result should do so
     >>> s = Scale(Note('B'), 'major')
     >>> [str(s[i]) for i in range(len(s))]
     ['B', 'C#', 'D#', 'E', 'F#', 'G#', 'A#']
-    
+
 To check if notes and chords are contained in a given scale:
 
     >>> Note('D#3') in s
@@ -92,7 +114,7 @@ Now let's try some advanced stuff: given a list of chords, find all scales that 
     Eb major
 
 
-If you have lilypond installed, you can make little melodies using this program, an example is given in 'lilypond_example.py'
+If you have [lilypond](http://lilypond.org/) installed, you can make little melodies using this program, an example is given in 'lilypond_example.py'
 
 
 Contributors
@@ -108,10 +130,10 @@ In alphabetical order
 * [nvoster](https://github.com/nvoster)
 * [Sri Raghavan](https://github.com/srir)
 * [Sylvain](https://github.com/SylvainDe)
+* [zsinx6](https://github.com/zsinx6)
 
 
 License
 =======
 
 See license file.
-
