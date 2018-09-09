@@ -150,6 +150,10 @@ class Note:
                 difference -= 12
             return Note(new_letter.name + Note.accidental_str(difference) +
                         str(new_note_octave))
+        elif isinstance(other, Note):
+            pass
+        elif isinstance(other, Chord):
+            pass
         else:
             raise UnsupportedOperands('+', self, other)
 
@@ -183,7 +187,7 @@ class Note:
 
     def frequency(self):
         from math import pow
-        return 440.0 * pow(2, (self.number - Note('A4').number) / 12.)
+        return 440.0 * pow(2, (self.number - Note('A4').number) / 12.0)
 
     def to_octave(self, octave):
         return Note(self.letter.name + self.accidental + str(octave))
@@ -191,40 +195,41 @@ class Note:
     def lilypond_notation(self):
         return str(self).replace('b', 'es').replace('#', 'is').lower()
 
-    def scientific_notation(self):
+    def octave_notation(self):
         return str(self) + str(self.octave)
 
     def __repr__(self):
-        return 'Note({!r})'.format(self.scientific_notation())
+        return 'Note({!r})'.format(self.octave_notation())
 
     def __str__(self):
         return self.letter.name + self.accidental
 
     def __eq__(self, other):
-        return self.scientific_notation() == other.scientific_notation()
+        return self.octave_notation() == other.octave_notation()
 
 
 class Interval:
     """
     The interval class.
 
-    The intervals are to be parsed in th following way:
-    * the quality, (m, M, p, A, d)
+    Intervals are to be parsed in the following way:
+    * the quality, (m, M, P, A, d)
     * the number.
 
-    For example, 'd8', 'P1', 'A5' are valid intervals. 'P3', '5' are not.
+    For example, 'd8', 'P1', 'A5' are valid intervals. 'P3', '5', 'm' are not.
     """
 
     intervals = {
-        'd1': -1,           'P1': 0,            'A1': 1,
+                            'P1': 0,            'A1': 1,
         'd2': 0,  'm2': 1,            'M2': 2,  'A2': 3,
         'd3': 2,  'm3': 3,            'M3': 4,  'A3': 5,
         'd4': 4,            'P4': 5,            'A4': 6,
         'd5': 6,            'P5': 7,            'A5': 8,
         'd6': 7,  'm6': 8,            'M6': 9,  'A6': 10,
         'd7': 9,  'm7': 10,           'M7': 11, 'A7': 12,
-        'd8': 11,           'P8': 12,           'A8': 13,
+        'd8': 11,           'P8': 12,
     }
+    
     quality_inverse = {
         'P': 'P',
         'd': 'A',
@@ -241,6 +246,7 @@ class Interval:
     def __init__(self, interval):
         self.quality = interval[0]
         self.number = int(interval[1:])
+        self.octave = 0
         self.semitones = 0
 
         # compound intervals:
@@ -248,6 +254,7 @@ class Interval:
         while number > 8:
             number -= 7
             self.semitones += 12
+            self.octave += 1
         interval1 = self.quality + str(number)
 
         try:
@@ -271,16 +278,19 @@ class Interval:
         """
         Split a compound interval into simple intervals.
         The sum of splitted intervals is equal to the compound interval.
+        Returns a list.
         """
-        ret = []
+        if not self.is_compound():
+            return [self]
+        split_intervals = []
         i = Interval(str(self))
         while i.is_compound():
             i.number -= 7
             i.semitones -= 12
-            ret.append(Interval('P8'))
-        ret.append(i)
-        return ret
-
+            split_intervals.append(Interval('P8'))
+        split_intervals.append(i)
+        return split_intervals
+    
     def complement(self):
         """
         Return the complement of this interval also known as inverted interval.
@@ -413,7 +423,7 @@ class Scale:
         4: 'lydian',
         5: 'mixolydian',
         6: 'aeolian',
-        7: 'locrian'
+        7: 'locrian',
     }
     greek_modes_set = set(greek_modes.values())
 
