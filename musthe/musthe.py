@@ -4,7 +4,6 @@
 """
 Copyright (c) 2014-2018
 Gonzalo Ciruelos <gonzalo.ciruelos@gmail.com>
-Federico Ferri <federico.ferri.it@gmail.com>
 """
 
 import re
